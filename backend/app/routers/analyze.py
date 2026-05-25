@@ -104,7 +104,7 @@ async def analyze_lint(
         result = await db.execute(select(Connection).filter(Connection.id == data.connection_id))
         conn = result.scalar_one_or_none()
         if conn:
-            dialect = conn.engine
+            dialect = "postgres" if conn.engine == "postgresql" else conn.engine
 
     try:
         # Step 1: parse query with dialect

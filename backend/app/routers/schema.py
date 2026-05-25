@@ -59,7 +59,8 @@ def assess_migration_impact(
 
     for q in queries:
         try:
-            parsed = sqlglot.parse_one(q.normalized_sql, read=dialect)
+            read_dialect = "postgres" if dialect == "postgresql" else dialect
+            parsed = sqlglot.parse_one(q.normalized_sql, read=read_dialect)
         except Exception:
             # Fallback simple string check
             has_impact = False
