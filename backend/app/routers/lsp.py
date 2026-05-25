@@ -11,7 +11,13 @@ router = APIRouter(prefix="/api/lsp", tags=["LSP"])
 async def lsp_websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     
-    sqls_path = shutil.which("sqls")
+    import os
+    sqls_path = shutil.which("sqls") or shutil.which("sqls.exe")
+    if sqls_path is None:
+        local_path = r"E:\Hackathon\Query_Sage\venv\Scripts\sqls.exe"
+        if os.path.exists(local_path):
+            sqls_path = local_path
+            
     if sqls_path is None:
         await websocket.send_json({
             "status": "error",
