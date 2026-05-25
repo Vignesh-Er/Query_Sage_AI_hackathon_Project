@@ -16,22 +16,28 @@ router = APIRouter(prefix="/api/analyze", tags=["Analysis"])
 
 @router.post("/stream")
 async def analyze_query_stream(
-    data: AnalyzeRequest,
-    db: AsyncSession = Depends(get_db)
+    data: AnalyzeRequest
 ):
     """
     Accepts a SQL query and connection options, running Layer 1, 2, and 3
     in sequence and streaming events via SSE.
     """
-    generator = analyze_query_pipeline(
-        db=db,
-        query_sql=data.query,
-        connection_id=data.connection_id,
-        include_execution_plan=data.include_execution_plan,
-        verify_equivalence_check=data.verify_equivalence,
-        orm_framework=data.orm_framework
-    )
-    return EventSourceResponse(generator)
+    from app.database import SessionLocal
+    
+    async def stream_wrapper():
+        async with SessionLocal() as db:
+            generator = analyze_query_pipeline(
+                db=db,
+                query_sql=data.query,
+                connection_id=data.connection_id,
+                include_execution_plan=data.include_execution_plan,
+                verify_equivalence_check=data.verify_equivalence,
+                orm_framework=data.orm_framework
+            )
+            async for event in generator:
+                yield event
+
+    return EventSourceResponse(stream_wrapper())
 
 @router.post("/what-if", response_model=WhatIfResponse)
 async def analyze_what_if(

@@ -9,6 +9,20 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
+import socket
+from urllib.parse import urlparse
+
+def is_otlp_endpoint_reachable(endpoint: str) -> bool:
+    """Checks if OTLP port is listening with a fast 100ms timeout."""
+    try:
+        parsed = urlparse(endpoint)
+        host = parsed.hostname or "localhost"
+        port = parsed.port or 4317
+        with socket.create_connection((host, port), timeout=0.1):
+            return True
+    except Exception:
+        return False
+
 def setup_telemetry(app_name: str):
     """
     Sets up OpenTelemetry TracerProvider with OTLPSpanExporter.
@@ -16,12 +30,16 @@ def setup_telemetry(app_name: str):
     """
     try:
         endpoint = getattr(settings, "QUERYSAGE_OTLP_ENDPOINT", "http://localhost:4317")
-        exporter = OTLPSpanExporter(endpoint=endpoint, timeout=2)
-        processor = BatchSpanProcessor(exporter)
-        provider = TracerProvider()
-        provider.add_span_processor(processor)
-        trace.set_tracer_provider(provider)
-        return trace.get_tracer(app_name)
+        if endpoint and is_otlp_endpoint_reachable(endpoint):
+            exporter = OTLPSpanExporter(endpoint=endpoint, timeout=2)
+            processor = BatchSpanProcessor(exporter)
+            provider = TracerProvider()
+            provider.add_span_processor(processor)
+            trace.set_tracer_provider(provider)
+            return trace.get_tracer(app_name)
+        else:
+            logger.info("OTLP collector is offline or unreachable. Defaulting to no-op tracer provider.")
+            return trace.get_tracer(app_name)
     except Exception as e:
         logger.warning(f"Telemetry unavailable: {str(e)}")
         return trace.get_tracer(app_name)
