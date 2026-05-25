@@ -33,7 +33,8 @@ export const MonacoEditorComponent: React.FC<MonacoEditorComponentProps> = ({
         fontSize: 12,
         fontFamily: TOKENS.fonts.code,
         tabSize: 2,
-        automaticLayout: true
+        automaticLayout: true,
+        fixedOverflowWidgets: true
       }}
     />
   );
