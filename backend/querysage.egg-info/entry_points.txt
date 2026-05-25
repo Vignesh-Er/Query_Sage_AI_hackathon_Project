@@ -1,0 +1,2 @@
+[console_scripts]
+querysage = app.cli:cli

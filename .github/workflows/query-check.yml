@@ -1,0 +1,58 @@
+name: QuerySage Schema Check
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  query-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # Install the package locally in editable mode to expose the querysage command
+        pip install -e backend/
+
+    - name: Audit SQL Migration Files
+      run: |
+        # Set database path to virtual or temp directory for CLI initialization
+        export QUERYSAGE_DB_PATH="/tmp/querysage.db"
+        
+        # Loop through all SQL files in the migrations directory and run querysage analyze
+        # If no migrations directory exists, audit any queries/ folder or mock test SQL files.
+        # We search recursively for all .sql files inside the project (excluding backend/tests and venv)
+        
+        found_error=0
+        
+        # Find all .sql files excluding venv, python cache, and node_modules
+        sql_files=$(find . -name "*.sql" -not -path "*/venv/*" -not -path "*/node_modules/*" -not -path "*/.pytest_cache/*")
+        
+        if [ -z "$sql_files" ]; then
+          echo "No SQL migration files found to analyze."
+          exit 0
+        fi
+        
+        for file in $sql_files; do
+          echo "Auditing SQL file: $file"
+          # Run querysage command failing if severity exceeds 7
+          querysage analyze --file "$file" --severity-threshold 7 || found_error=1
+        done
+        
+        if [ $found_error -ne 0 ]; then
+          echo "❌ Critical SQL anti-patterns with severity >= 7 detected in migrations."
+          exit 1
+        fi
+        echo "✔ All SQL queries passed severity verification checks."

@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #080E1A; /* Abyss */
+    color: #E8EEF6; /* Text Primary */
+    font-family: 'IBM Plex Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080E1A; /* Abyss */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E3356; /* Border */
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E8860A; /* Ember */
+}
+
+/* Prism code-like formatting or custom styles */
+.monaco-editor-wrapper {
+  border: 1px solid #1E3356;
+}
+
+.custom-conic-ring {
+  background: conic-gradient(
+    #E8860A var(--value), /* Ember */
+    #152236 0deg /* Trench */
+  );
+}

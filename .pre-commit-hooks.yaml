@@ -1,0 +1,6 @@
+- id: querysage-check
+  name: QuerySage SQL Auditor
+  description: Scan SQL migrations against static performance and correctness rules
+  entry: querysage check-schema --migrations
+  language: python
+  types: [sql]

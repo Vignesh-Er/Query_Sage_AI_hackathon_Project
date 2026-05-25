@@ -1,0 +1,64 @@
+[
+  {
+    "Plan": {
+      "Node Type": "Aggregate",
+      "Strategy": "Sorted",
+      "Partial Mode": "Simple",
+      "Parallel Aware": false,
+      "Startup Cost": 315.96,
+      "Total Cost": 316.96,
+      "Plan Rows": 10,
+      "Plan Width": 44,
+      "Actual Startup Time": 2.221,
+      "Actual Total Time": 2.250,
+      "Actual Rows": 10,
+      "Actual Loops": 1,
+      "Group Key": [
+        "customer_id"
+      ],
+      "Shared Hit Blocks": 120,
+      "Shared Read Blocks": 0,
+      "Local Hit Blocks": 0,
+      "Local Read Blocks": 0,
+      "Temp Hit Blocks": 0,
+      "Temp Read Blocks": 0,
+      "Temp Written Blocks": 0,
+      "Plans": [
+        {
+          "Node Type": "Sort",
+          "Parent Relationship": "Outer",
+          "Startup Cost": 312.96,
+          "Total Cost": 313.96,
+          "Plan Rows": 16044,
+          "Plan Width": 36,
+          "Actual Rows": 16044,
+          "Actual Loops": 1,
+          "Sort Key": [
+            "customer_id"
+          ],
+          "Sort Method": "quicksort",
+          "Sort Space Used": 1024,
+          "Sort Space Type": "Memory",
+          "Shared Hit Blocks": 120,
+          "Shared Read Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Seq Scan",
+              "Parent Relationship": "Outer",
+              "Relation Name": "rental",
+              "Alias": "rental",
+              "Startup Cost": 0.00,
+              "Total Cost": 310.96,
+              "Plan Rows": 16044,
+              "Plan Width": 36,
+              "Actual Rows": 16044,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 120,
+              "Shared Read Blocks": 0
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
