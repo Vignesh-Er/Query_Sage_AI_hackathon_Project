@@ -297,8 +297,16 @@ export const AnalyzerView: React.FC<AnalyzerViewProps> = ({
             </div>
           </div>
 
+          {/* Error Message block */}
+          {streamState.error && (
+            <Card className="p-3 bg-cinder/10 border-cinder/30 flex items-center gap-2 text-xs font-semibold text-cinder">
+              <span className="w-2 h-2 rounded-full bg-cinder animate-ping shrink-0" />
+              <span>Error: {streamState.error}</span>
+            </Card>
+          )}
+
           {/* Status Message block */}
-          {streamState.status && (
+          {isAnalyzing && streamState.status?.stage && (
             <Card className="p-3 bg-trench/30 border-border/80 flex items-center gap-2 text-xs font-semibold text-textPrimary">
               <Activity size={14} className="text-glacier animate-pulse shrink-0" />
               <span>Stage [{streamState.status.stage.toUpperCase()}]: {streamState.status.message}</span>
